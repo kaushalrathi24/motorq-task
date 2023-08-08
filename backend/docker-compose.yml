@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  nest-api:
+    container_name: motorq-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    env_file:
+      - .env
+
+  postgres:
+    image: postgres
+    container_name: postgres-motorq
+    restart: always
+    ports:
+      - 5432:5432
+    env_file:
+      - .env
+    volumes:
+      - /home/user/data/postgres/motorq:/var/lib/postgresql/data
+
+volumes:
+  postgres:
+    name: nest-db
+    driver: local
