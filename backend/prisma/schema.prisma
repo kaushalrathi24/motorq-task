@@ -62,7 +62,7 @@ model Request {
   status      Status   @default(PENDING)
   Requester   User     @relation(fields: [requesterId], references: [id])
   requesterId String
-  comments    String
+  comments    String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   Workflow    Workflow @relation(fields: [workflowId], references: [id])
