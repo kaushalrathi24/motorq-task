@@ -6,6 +6,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import { AdminModule } from './admin/admin.module';
 import { RequesterModule } from './requester/requester.module';
+import { ApproverModule } from './approver/approver.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { RequesterModule } from './requester/requester.module';
     PrismaModule,
     AdminModule,
     RequesterModule,
+    ApproverModule,
   ],
   controllers: [AppController],
   providers: [AppService],
