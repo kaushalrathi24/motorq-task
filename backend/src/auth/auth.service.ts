@@ -34,7 +34,7 @@ export class AuthService {
         expiresIn: await this.configService.get('ACCESS_TOKEN_EXPIRY'),
         secret: await this.configService.get('ACCESS_TOKEN_SECRET'),
       });
-      return { token };
+      return { token, role: user.role };
     } catch (error) {
       return error;
     }
