@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcrypt';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { LoginDto } from './dto/login.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
@@ -16,13 +16,17 @@ export class AuthService {
     try {
       const { email, password } = loginDto;
 
-      const user = await this.prisma.user.findUniqueOrThrow({
+      const user = await this.prisma.user.findUnique({
         where: { email },
         select: { id: true, role: true, password: true },
       });
 
+      if (!user) {
+        throw new UnauthorizedException('Invalid email');
+      }
+
       if (!(await bcrypt.compare(password, user.password))) {
-        throw new Error('Invalid password');
+        throw new UnauthorizedException('Invalid password');
       }
 
       const payload = { id: user.id, role: user.role };
@@ -32,7 +36,7 @@ export class AuthService {
       });
       return { token };
     } catch (error) {
-      throw error;
+      return error;
     }
   }
 }
