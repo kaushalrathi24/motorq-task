@@ -52,6 +52,7 @@ model Workflow {
   name        String
   type        Type
   approvers   Approver[]
+  requests    Request[]
 }
 
 model Request {
@@ -64,4 +65,6 @@ model Request {
   comments    String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  Workflow    Workflow @relation(fields: [workflowId], references: [id])
+  workflowId  String
 }

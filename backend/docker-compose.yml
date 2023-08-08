@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.3'
 services:
   nest-api:
     container_name: motorq-api
@@ -27,5 +27,4 @@ services:
 
 volumes:
   postgres:
-    name: nest-db
     driver: local
