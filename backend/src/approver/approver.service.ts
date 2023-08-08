@@ -31,6 +31,7 @@ export class ApproverService {
             in: workflowids,
           },
         },
+        status: 'PENDING',
       },
     });
     const requestIds = <[string]>(
@@ -46,6 +47,7 @@ export class ApproverService {
         id: true,
         name: true,
         description: true,
+        status: true,
         Requester: {
           select: {
             name: true,
