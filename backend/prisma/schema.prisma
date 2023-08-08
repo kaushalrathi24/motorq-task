@@ -16,10 +16,52 @@ enum Role {
   ADMIN
 }
 
+enum Status {
+  PENDING
+  APPROVED
+  REJECTED
+  JUSTIFICATION
+}
+
+enum Type {
+  SINGLE
+  TWO
+  ALL
+}
+
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String
-  password  String
-  role      Role     @default(REQUESTER)
+  id       String    @id @default(uuid())
+  email    String    @unique
+  name     String
+  password String
+  role     Role      @default(REQUESTER)
+  Approver Approver?
+  Request  Request[]
+}
+
+model Approver {
+  id       String     @id @default(uuid())
+  User     User       @relation(fields: [userId], references: [id])
+  userId   String     @unique
+  Workflow Workflow[]
+}
+
+model Workflow {
+  id          String     @id @default(uuid())
+  description String
+  name        String
+  type        Type
+  approvers   Approver[]
+}
+
+model Request {
+  id          String   @id @default(uuid())
+  description String
+  name        String
+  status      Status   @default(PENDING)
+  Requester   User     @relation(fields: [requesterId], references: [id])
+  requesterId String
+  comments    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
