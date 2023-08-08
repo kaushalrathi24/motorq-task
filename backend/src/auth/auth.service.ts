@@ -36,7 +36,7 @@ export class AuthService {
       });
       return { token, role: user.role };
     } catch (error) {
-      return error;
+      throw error;
     }
   }
 }
