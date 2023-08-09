@@ -32,4 +32,28 @@ export class RequesterController {
   ) {
     return await this.requesterService.createRequest(user, createRequestDto);
   }
+
+  @SetMetadata('role', 'REQUESTER')
+  @Get('get-pending')
+  async getPending(@User() user: UserInterface) {
+    return await this.requesterService.getRequests(user, 'PENDING');
+  }
+
+  @SetMetadata('role', 'REQUESTER')
+  @Get('get-approved')
+  async getApproved(@User() user: UserInterface) {
+    return await this.requesterService.getRequests(user, 'APPROVED');
+  }
+
+  @SetMetadata('role', 'REQUESTER')
+  @Get('get-rejected')
+  async getRejected(@User() user: UserInterface) {
+    return await this.requesterService.getRequests(user, 'REJECTED');
+  }
+
+  @SetMetadata('role', 'REQUESTER')
+  @Get('get-justified')
+  async getJustified(@User() user: UserInterface) {
+    return await this.requesterService.getRequests(user, 'JUSTIFICATION');
+  }
 }
