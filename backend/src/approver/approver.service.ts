@@ -101,6 +101,8 @@ export class ApproverService {
       throw new ForbiddenException('Incorrect User id');
     }
 
+    console.log(id);
+
     const { Approvers, status, Workflow, Requester, name } =
       await this.prisma.request.findUnique({
         where: {
