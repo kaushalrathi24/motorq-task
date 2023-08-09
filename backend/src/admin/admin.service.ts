@@ -153,4 +153,42 @@ export class AdminService {
     });
     return { count };
   }
+
+  async getHistory() {
+    try {
+      const requests = await this.prisma.request.findMany({
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          status: true,
+          updatedAt: true,
+          Workflow: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          Requester: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+        where: {
+          status: {
+            in: ['APPROVED', 'REJECTED'],
+          },
+        },
+        orderBy: {
+          updatedAt: 'desc',
+        },
+      });
+
+      return requests;
+    } catch (error) {
+      return error;
+    }
+  }
 }

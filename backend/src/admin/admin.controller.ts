@@ -52,4 +52,10 @@ export class AdminController {
   async getRejectedCount(@Param('id') id: string) {
     return await this.adminService.getCount(id, 'REJECTED');
   }
+
+  @SetMetadata('role', 'ADMIN')
+  @Get('get-history')
+  async getHistory() {
+    return await this.adminService.getHistory();
+  }
 }
