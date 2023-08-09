@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateRequestDto } from './dto/createRequest.dto';
 import { UserInterface } from '../auth/interface/user.interface';
 import { Status } from '@prisma/client';
+import { AddJustificationDto } from './dto/addJustification.dto';
 
 @Injectable()
 export class RequesterService {
@@ -80,6 +81,34 @@ export class RequesterService {
 
       return requests;
     } catch (error) {
+      return error;
+    }
+  }
+
+  async addJustification(id: string, addJustificationDto: AddJustificationDto) {
+    try {
+      const { requestId, description } = addJustificationDto;
+      const pendingEnum: Status = Status['PENDING'];
+      await this.prisma.request.update({
+        where: {
+          id: requestId,
+          Requester: {
+            id,
+          },
+        },
+        data: {
+          description,
+          status: pendingEnum,
+        },
+      });
+
+      return { status: 'Successfully added justification' };
+    } catch (error) {
+      if (error.code === 'P2025') {
+        throw new BadRequestException(
+          "Incorrect RequestId or User didn't create request",
+        );
+      }
       return error;
     }
   }

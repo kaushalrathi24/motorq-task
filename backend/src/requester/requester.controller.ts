@@ -12,6 +12,7 @@ import { RequesterService } from './requester.service';
 import { User } from '../auth/auth.decorator';
 import { UserInterface } from 'src/auth/interface/user.interface';
 import { CreateRequestDto } from './dto/createRequest.dto';
+import { AddJustificationDto } from './dto/addJustification.dto';
 
 @UseGuards(JwtGuard, RolesGuard)
 @Controller('requester')
@@ -55,5 +56,17 @@ export class RequesterController {
   @Get('get-justified')
   async getJustified(@User() user: UserInterface) {
     return await this.requesterService.getRequests(user, 'JUSTIFICATION');
+  }
+
+  @SetMetadata('role', 'REQUESTER')
+  @Post('add-justification')
+  async addJustification(
+    @User() user: UserInterface,
+    @Body() addJustificationDto: AddJustificationDto,
+  ) {
+    return await this.requesterService.addJustification(
+      user.id,
+      addJustificationDto,
+    );
   }
 }
