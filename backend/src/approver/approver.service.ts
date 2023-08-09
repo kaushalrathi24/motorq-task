@@ -75,6 +75,7 @@ export class ApproverService {
             name: true,
           },
         },
+        attachmentPath: true,
       },
       orderBy: {
         updatedAt: 'asc',

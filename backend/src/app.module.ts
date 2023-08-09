@@ -7,18 +7,23 @@ import { ConfigModule } from '@nestjs/config';
 import { AdminModule } from './admin/admin.module';
 import { RequesterModule } from './requester/requester.module';
 import { ApproverModule } from './approver/approver.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      //envFilePath: '../../.env',
     }),
     AuthModule,
     PrismaModule,
     AdminModule,
     RequesterModule,
     ApproverModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'files'),
+      serveRoot: '/files/',
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
