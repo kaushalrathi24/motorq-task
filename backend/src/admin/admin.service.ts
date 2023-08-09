@@ -58,4 +58,16 @@ export class AdminService {
       return error;
     }
   }
+
+  async getPendingCount(workflowId: string) {
+    const count = await this.prisma.request.count({
+      where: {
+        Workflow: {
+          id: workflowId,
+        },
+        status: 'PENDING',
+      },
+    });
+    return { count };
+  }
 }

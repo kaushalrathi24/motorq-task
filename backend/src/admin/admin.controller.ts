@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   SetMetadata,
   UseGuards,
@@ -32,5 +33,11 @@ export class AdminController {
   @Get('get-workflows')
   async getWorkflows() {
     return await this.adminService.getWorkflows();
+  }
+
+  @SetMetadata('role', 'ADMIN')
+  @Get('get-pending-count/:id')
+  async getPendingCount(@Param('id') id: string) {
+    return await this.adminService.getPendingCount(id);
   }
 }
