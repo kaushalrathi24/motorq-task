@@ -135,11 +135,13 @@ export class ApproverService {
     }
 
     const numApprovals = Approvers.length;
-    const alreadyApproverList = <[string]>(
-      Approvers.flatMap((request) => Object.values(request))
-    );
-    if (alreadyApproverList.includes(approverId)) {
-      throw new BadRequestException('You have already approved this request');
+    if (numApprovals != 0) {
+      const alreadyApproverList = <[string]>(
+        Approvers.flatMap((request) => Object.values(request))
+      );
+      if (alreadyApproverList.includes(approverId)) {
+        throw new BadRequestException('You have already approved this request');
+      }
     }
 
     let newStatus = 'PENDING';
