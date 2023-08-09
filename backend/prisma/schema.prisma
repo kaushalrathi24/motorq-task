@@ -40,10 +40,11 @@ model User {
 }
 
 model Approver {
-  id       String     @id @default(uuid())
-  User     User       @relation(fields: [userId], references: [id])
-  userId   String     @unique
-  Workflow Workflow[]
+  id        String     @id @default(uuid())
+  User      User       @relation(fields: [userId], references: [id])
+  userId    String     @unique
+  Workflow  Workflow[]
+  Request   Request[]
 }
 
 model Workflow {
@@ -56,15 +57,16 @@ model Workflow {
 }
 
 model Request {
-  id          String   @id @default(uuid())
+  id          String     @id @default(uuid())
   description String
   name        String
-  status      Status   @default(PENDING)
-  Requester   User     @relation(fields: [requesterId], references: [id])
+  status      Status     @default(PENDING)
+  Requester   User       @relation(fields: [requesterId], references: [id])
   requesterId String
   comments    String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  Workflow    Workflow @relation(fields: [workflowId], references: [id])
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  Workflow    Workflow   @relation(fields: [workflowId], references: [id])
   workflowId  String
+  Approvers   Approver[]
 }
