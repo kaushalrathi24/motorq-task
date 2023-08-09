@@ -4,11 +4,15 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Status } from '@prisma/client';
+import { MailService } from 'src/mail/mail.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class ApproverService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly mailer: MailService,
+  ) {}
 
   async getRequests(userId: string) {
     const { id: approverId } = await this.prisma.approver.findUnique({
@@ -97,7 +101,7 @@ export class ApproverService {
       throw new ForbiddenException('Incorrect User id');
     }
 
-    const { Approvers, status, Workflow } =
+    const { Approvers, status, Workflow, Requester, name } =
       await this.prisma.request.findUnique({
         where: {
           id,
@@ -112,6 +116,12 @@ export class ApproverService {
             select: {
               type: true,
               id: true,
+            },
+          },
+          Requester: {
+            select: {
+              name: true,
+              email: true,
             },
           },
         },
@@ -183,6 +193,13 @@ export class ApproverService {
       },
     });
 
+    await this.mailer.sendRequestersStatus(
+      Requester.email,
+      Requester.name,
+      name,
+      newStatus,
+    );
+
     return { newStatus };
   }
 
@@ -205,7 +222,7 @@ export class ApproverService {
       throw new ForbiddenException('Incorrect User Id');
     }
 
-    const { Approvers, status, Workflow } =
+    const { Approvers, status, Workflow, Requester, name } =
       await this.prisma.request.findUnique({
         where: {
           id,
@@ -219,6 +236,12 @@ export class ApproverService {
           Workflow: {
             select: {
               id: true,
+            },
+          },
+          Requester: {
+            select: {
+              name: true,
+              email: true,
             },
           },
         },
@@ -270,6 +293,13 @@ export class ApproverService {
         comments,
       },
     });
+
+    await this.mailer.sendRequestersStatus(
+      Requester.email,
+      Requester.name,
+      name,
+      type,
+    );
 
     return { newStatusEnum };
   }

@@ -9,6 +9,7 @@ import { RequesterModule } from './requester/requester.module';
 import { ApproverModule } from './approver/approver.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { join } from 'path';
       rootPath: join(__dirname, '..', 'files'),
       serveRoot: '/files/',
     }),
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
