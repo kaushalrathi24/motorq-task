@@ -43,4 +43,19 @@ export class AdminService {
       return error;
     }
   }
+
+  async getWorkflows() {
+    try {
+      const workflows = await this.prisma.workflow.findMany({
+        select: {
+          id: true,
+          name: true,
+        },
+      });
+
+      return workflows;
+    } catch (error) {
+      return error;
+    }
+  }
 }

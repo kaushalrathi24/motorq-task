@@ -27,4 +27,10 @@ export class AdminController {
   async createWorkflow(@Body() createWorkflowDto: CreateWorkflowDto) {
     return await this.adminService.createWorkflow(createWorkflowDto);
   }
+
+  @SetMetadata('role', 'ADMIN')
+  @Get('get-workflows')
+  async getWorkflows() {
+    return await this.adminService.getWorkflows();
+  }
 }
