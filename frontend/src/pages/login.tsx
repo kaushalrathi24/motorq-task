@@ -1,4 +1,6 @@
 import configuredAxios from '@/config/axios';
+import postHandler from '@/handlers/postHandler';
+import { AxiosError } from 'axios';
 import { setCookies } from 'cookies-next';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
@@ -15,18 +17,15 @@ export default function ExampleV3(): JSX.Element {
       email,
       password,
     };
-    try {
-      const res = await configuredAxios.post('/auth/login', formData);
-      if (res.status == 201) {
-        setCookies('token', res.data.token);
-        setCookies('role', res.data.role);
-        router.push('/');
-      } else {
-        toast.error(res.data.message);
-      }
-    } catch (err) {
-      console.log(err);
-      toast.error('Internal Server Error');
+
+    const res = await postHandler('/auth/login', formData);
+    if (res.statusCode == 201) {
+      toast.success('Logged In');
+      setCookies('token', res.data.token);
+      setCookies('role', res.data.role);
+      router.push('/');
+    } else {
+      toast.error(res.data.message);
     }
   };
 
@@ -50,7 +49,7 @@ export default function ExampleV3(): JSX.Element {
         />
         <button
           onClick={handleSubmit}
-          className="w-1/3 m-auto bg-slate-100 border-2 text-black border-[#1f1f1f] hover:text-white py-2 rounded-xl font-Inconsolata text-xl hover:bg-[#1f1f1f] transition-all duration-200 ease-in-out"
+          className="w-1/3 m-auto bg-slate-50 border-2 text-black border-[#1f1f1f] hover:text-white py-2 rounded-xl font-Inconsolata text-xl hover:bg-[#1f1f1f] transition-all duration-200 ease-in-out"
         >
           Submit
         </button>
