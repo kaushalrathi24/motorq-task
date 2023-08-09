@@ -133,9 +133,9 @@ export class ApproverService {
         message: `Request in ${status}`,
       };
     }
-
-    const numApprovals = Approvers.length;
-    if (numApprovals != 0) {
+    let numApprovals = 0;
+    if (Approvers != null && Approvers.length != 0) {
+      numApprovals = Approvers.length;
       const alreadyApproverList = <[string]>(
         Approvers.flatMap((request) => Object.values(request))
       );
@@ -249,7 +249,7 @@ export class ApproverService {
         },
       });
 
-    if (Approvers.length != 0) {
+    if (Approvers != null && Approvers.length != 0) {
       const alreadyApproverList = <[string]>(
         Approvers.flatMap((request) => Object.values(request))
       );
