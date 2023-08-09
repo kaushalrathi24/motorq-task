@@ -12,4 +12,8 @@ export class CreateRequestDto {
   @IsString()
   @IsNotEmpty()
   workflowId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  filename: string;
 }

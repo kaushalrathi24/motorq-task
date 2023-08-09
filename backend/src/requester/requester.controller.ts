@@ -5,6 +5,10 @@ import {
   SetMetadata,
   UseGuards,
   Body,
+  UploadedFile,
+  UseInterceptors,
+  ParseFilePipeBuilder,
+  HttpStatus,
 } from '@nestjs/common';
 import { JwtGuard } from '../auth/guard/auth.guard';
 import { RolesGuard } from '../auth/guard/role.guard';
@@ -13,6 +17,11 @@ import { User } from '../auth/auth.decorator';
 import { UserInterface } from 'src/auth/interface/user.interface';
 import { CreateRequestDto } from './dto/createRequest.dto';
 import { AddJustificationDto } from './dto/addJustification.dto';
+import { Express } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { v4 as uuidv4 } from 'uuid';
+import { extname } from 'path';
 
 @UseGuards(JwtGuard, RolesGuard)
 @Controller('requester')
@@ -32,6 +41,41 @@ export class RequesterController {
     @Body() createRequestDto: CreateRequestDto,
   ) {
     return await this.requesterService.createRequest(user, createRequestDto);
+  }
+
+  @SetMetadata('role', 'REQUESTER')
+  @Post('upload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './files',
+        filename: (req, file, cb) => {
+          const uniqueId = uuidv4();
+          const extension = extname(file.originalname);
+          const fileName = `${file.originalname}_${uniqueId}${extension}`;
+          cb(null, fileName);
+        },
+      }),
+    }),
+  )
+  async uploadAttachment(
+    @User() user: UserInterface,
+    @Body() createRequestDto: CreateRequestDto,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({
+          fileType: 'pdf',
+        })
+        .addMaxSizeValidator({
+          maxSize: 500000000,
+        })
+        .build({
+          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        }),
+    )
+    file: Express.Multer.File,
+  ) {
+    return await this.requesterService.uploadAttachment(file.filename);
   }
 
   @SetMetadata('role', 'REQUESTER')

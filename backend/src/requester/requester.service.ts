@@ -27,12 +27,13 @@ export class RequesterService {
 
   async createRequest(user: UserInterface, createRequestDto: CreateRequestDto) {
     try {
-      const { workflowId, name, description } = createRequestDto;
+      const { workflowId, name, description, filename } = createRequestDto;
 
       await this.prisma.request.create({
         data: {
           name,
           description,
+          attachmentPath: filename,
           Workflow: {
             connect: {
               id: workflowId,
@@ -53,6 +54,10 @@ export class RequesterService {
       }
       return error;
     }
+  }
+
+  async uploadAttachment(filename: string) {
+    return { filename };
   }
 
   async getRequests(user: UserInterface, status: string) {
