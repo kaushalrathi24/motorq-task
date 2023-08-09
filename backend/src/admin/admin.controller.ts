@@ -40,4 +40,16 @@ export class AdminController {
   async getPendingCount(@Param('id') id: string) {
     return await this.adminService.getPendingCount(id);
   }
+
+  @SetMetadata('role', 'ADMIN')
+  @Get('get-approved-count/:id')
+  async getApprovedCount(@Param('id') id: string) {
+    return await this.adminService.getCount(id, 'APPROVED');
+  }
+
+  @SetMetadata('role', 'ADMIN')
+  @Get('get-rejected-count/:id')
+  async getRejectedCount(@Param('id') id: string) {
+    return await this.adminService.getCount(id, 'REJECTED');
+  }
 }

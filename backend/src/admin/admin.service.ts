@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateWorkflowDto } from './dto/createWorkflow.dto';
-import { Type } from '@prisma/client';
+import { Status, Type } from '@prisma/client';
 
 @Injectable()
 export class AdminService {
@@ -66,6 +66,89 @@ export class AdminService {
           id: workflowId,
         },
         status: 'PENDING',
+      },
+    });
+    return { count };
+  }
+
+  async getCount(workflowId: string, statusString: string) {
+    const now = new Date();
+    const res = {};
+    const status: Status = Status[statusString];
+
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+    res['month'] = await this.getCountTemplate(
+      workflowId,
+      startOfMonth,
+      endOfMonth,
+      status,
+    );
+
+    const dayOfWeek = now.getDay();
+    const startOfWeek = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() - dayOfWeek,
+    );
+    const endOfWeek = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() - dayOfWeek + 6,
+      23,
+      59,
+      59,
+      999,
+    );
+    res['week'] = await this.getCountTemplate(
+      workflowId,
+      startOfWeek,
+      endOfWeek,
+      status,
+    );
+
+    const startOfDay = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+    );
+
+    const endOfDay = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      23,
+      59,
+      59,
+      999,
+    );
+    res['day'] = await this.getCountTemplate(
+      workflowId,
+      startOfDay,
+      endOfDay,
+      status,
+    );
+
+    return res;
+  }
+
+  async getCountTemplate(
+    workflowId: string,
+    gte: Date,
+    lte: Date,
+    status: Status,
+  ) {
+    const count = await this.prisma.request.count({
+      where: {
+        Workflow: {
+          id: workflowId,
+        },
+        status,
+        updatedAt: {
+          gte,
+          lte,
+        },
       },
     });
     return { count };
